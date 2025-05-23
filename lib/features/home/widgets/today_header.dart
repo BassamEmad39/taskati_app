@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:taskati/core/functions/navigations.dart';
 import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/core/widgets/main_button.dart';
+import 'package:taskati/features/add_task/add_task_screen.dart';
 
 class TodayHeader extends StatelessWidget {
   const TodayHeader({super.key});
@@ -24,7 +26,13 @@ class TodayHeader extends StatelessWidget {
             ),
           ],
         ),
-        MainButton(width: 137, title: '+ Add Task', onPressed: () {}),
+        MainButton(
+          width: 137,
+          title: '+ Add Task',
+          onPressed: () {
+            context.pushTo(AddTaskScreen());
+          },
+        ),
       ],
     );
   }

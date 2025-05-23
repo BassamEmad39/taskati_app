@@ -21,6 +21,16 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          foregroundColor: AppColors.primaryColor,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.normal,
+            color: AppColors.primaryColor,
+            fontFamily: AppFonts.poppins,
+          ),
+        ),
         fontFamily: AppFonts.poppins,
         inputDecorationTheme: InputDecorationTheme(
           hintStyle: TextStyles.getSmallTextStyle(),
