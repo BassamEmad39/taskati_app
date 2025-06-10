@@ -30,7 +30,7 @@ class _UploadScreenState extends State<UploadScreen> {
             onPressed: () {
               if (path != null && nameController.text.isNotEmpty) {
                 LocalStorage.cacheData(LocalStorage.name, nameController.text);
-                LocalStorage.cacheData(LocalStorage.image, path);
+                LocalStorage.cacheData(LocalStorage.image, path!);
                 context.pushReplacementTo(HomeScreen());
               } else if (path == null && nameController.text.isNotEmpty) {
                 showMainDialog(context, 'Please select an image');
@@ -43,7 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 );
               }
             },
-            child: const Text('Done'),
+            child: const Text('Done', style: TextStyle(color: Colors.black)),
           ),
         ],
       ),

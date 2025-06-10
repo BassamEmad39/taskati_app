@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:taskati/core/model/task_model.dart';
+import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
 import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/core/widgets/main_button.dart';
@@ -19,6 +21,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   var dateController = TextEditingController();
   var startTimeController = TextEditingController();
   var endTimeController = TextEditingController();
+  var formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -35,28 +38,51 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              title(),
-              Gap(10),
-              description(),
-              Gap(10),
-              date(),
-              Gap(10),
-              Row(children: [startTime(), Gap(10), endTime()]),
-              Gap(10),
-              color(),
-            ],
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                title(),
+                Gap(10),
+                description(),
+                Gap(10),
+                date(),
+                Gap(10),
+                Row(children: [startTime(), Gap(10), endTime()]),
+                Gap(10),
+                color(),
+              ],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: MainButton(
-          title: 'Add Task',
+          title: 'Create Task',
           onPressed: () {
-            // Add your task adding logic here
+            if (formKey.currentState!.validate()) {
+              String id = titleController.text + DateTime.now().toString();
+              LocalStorage.cacheTask(
+                id,
+                TaskModel(
+                  id: id,
+                  title: titleController.text,
+                  description: descriptionController.text,
+                  date: dateController.text,
+                  startTime: startTimeController.text,
+                  endTime: endTimeController.text,
+                  color: selectedColor,
+                  isCompleted: false,
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Task added successfully!')),
+              );
+              Navigator.pop(context);
+            }
+            ;
           },
         ),
       ),
@@ -69,7 +95,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           'Color',
-          style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+          style: TextStyles.getBodyTextStyle(
+            context,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Row(
           children: List.generate(3, (index) {
@@ -107,14 +136,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           'Title',
-          style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+          style: TextStyles.getBodyTextStyle(
+            context,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Gap(5),
         TextFormField(
+          validator: (value) => value!.isEmpty ? 'Title cannot be empty' : null,
           controller: titleController,
           decoration: InputDecoration(
             hintText: 'Enter title here',
-            hintStyle: TextStyles.getSmallTextStyle(color: Colors.black),
+            hintStyle: TextStyles.getSmallTextStyle(),
           ),
         ),
       ],
@@ -128,15 +161,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           'Note',
-          style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+          style: TextStyles.getBodyTextStyle(
+            context,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Gap(5),
         TextFormField(
+          validator:
+              (value) => value!.isEmpty ? 'Description cannot be empty' : null,
           controller: descriptionController,
           maxLines: 3,
           decoration: InputDecoration(
             hintText: 'Enter note here',
-            hintStyle: TextStyles.getSmallTextStyle(color: Colors.black),
+            hintStyle: TextStyles.getSmallTextStyle(),
           ),
         ),
       ],
@@ -149,7 +187,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       children: [
         Text(
           'Date',
-          style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+          style: TextStyles.getBodyTextStyle(
+            context,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Gap(5),
         TextFormField(
@@ -160,7 +201,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           controller: dateController,
           decoration: InputDecoration(
             suffixIcon: Icon(Icons.calendar_month_outlined),
-            hintStyle: TextStyles.getSmallTextStyle(color: Colors.black),
+            hintStyle: TextStyles.getSmallTextStyle(),
           ),
         ),
       ],
@@ -187,7 +228,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         children: [
           Text(
             'Start Time',
-            style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+            style: TextStyles.getBodyTextStyle(
+              context,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Gap(5),
           TextFormField(
@@ -220,7 +264,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         children: [
           Text(
             'End Time',
-            style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.w500),
+            style: TextStyles.getBodyTextStyle(
+              context,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Gap(5),
           TextFormField(

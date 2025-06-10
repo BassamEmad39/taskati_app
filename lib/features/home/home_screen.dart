@@ -1,7 +1,9 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:taskati/core/utils/colors.dart';
+import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/features/home/widgets/home_header.dart';
 import 'package:taskati/features/home/widgets/task_list_builder.dart';
 import 'package:taskati/features/home/widgets/today_header.dart';
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String selectedDate = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,16 +30,24 @@ class _HomeScreenState extends State<HomeScreen> {
               TodayHeader(),
               Gap(20),
               DatePicker(
-                height: 90,
+                height: 100,
                 width: 70,
                 DateTime.now(),
+                dayTextStyle: TextStyles.getBodyTextStyle(context),
+                monthTextStyle: TextStyles.getBodyTextStyle(context),
+                dateTextStyle: TextStyles.getBodyTextStyle(context),
+                
                 initialSelectedDate: DateTime.now(),
                 selectionColor: AppColors.primaryColor,
                 selectedTextColor: Colors.white,
-                onDateChange: (date) {},
+                onDateChange: (date) {
+                  setState(() {
+                    selectedDate = DateFormat.yMd().format(date);
+                  });
+                },
               ),
               Gap(20),
-              TaskListBuilder(),
+              TaskListBuilder(selectedDate: selectedDate),
             ],
           ),
         ),

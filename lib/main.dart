@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:taskati/core/constants/app_fonts.dart';
+import 'package:taskati/core/model/task_model.dart';
 import 'package:taskati/core/services/local_storage.dart';
-import 'package:taskati/core/utils/colors.dart';
-import 'package:taskati/core/utils/text_styles.dart';
-import 'package:taskati/features/intro/splash_screnn.dart';
+import 'package:taskati/core/utils/themes.dart';
+import 'package:taskati/features/intro/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('user');
+  Hive.registerAdapter<TaskModel>(TaskModelAdapter());
+  await Hive.openBox<TaskModel>('tasks');
   LocalStorage.init();
   runApp(const MainApp());
 }
@@ -19,42 +20,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          foregroundColor: AppColors.primaryColor,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.normal,
-            color: AppColors.primaryColor,
-            fontFamily: AppFonts.poppins,
-          ),
-        ),
-        fontFamily: AppFonts.poppins,
-        inputDecorationTheme: InputDecorationTheme(
-          hintStyle: TextStyles.getSmallTextStyle(),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppColors.primaryColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppColors.primaryColor),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppColors.redColor),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppColors.redColor),
-          ),
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: LocalStorage.userBox.listenable(),
+      builder: (context, value, child) {
+        bool isDarkMode =
+            LocalStorage.getData(LocalStorage.isDarkMode) ?? false;
+        return MaterialApp(
+          darkTheme: AppThemes.darkTheme,
+          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          theme: AppThemes.lightTheme,
 
-      debugShowCheckedModeBanner: false,
-      home: SplashScrenn(),
+          debugShowCheckedModeBanner: false,
+          home: SplashScreen(),
+        );
+      },
     );
   }
 }

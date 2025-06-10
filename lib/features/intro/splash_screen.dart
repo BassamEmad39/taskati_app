@@ -8,14 +8,14 @@ import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/features/home/home_screen.dart';
 import 'package:taskati/features/intro/upload_screen.dart';
 
-class SplashScrenn extends StatefulWidget {
-  const SplashScrenn({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashScrenn> createState() => _SplashScrennState();
+  State<SplashScreen> createState() => _SplashScrennState();
 }
 
-class _SplashScrennState extends State<SplashScrenn> {
+class _SplashScrennState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -36,7 +36,7 @@ class _SplashScrennState extends State<SplashScrenn> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(AppImages.logo, width: 200, height: 200),
-            Text('Taskati', style: TextStyles.getTitleTextStyle()),
+            Text('Taskati', style: TextStyles.getBodyTextStyle(context, fontSize: 30, fontWeight: FontWeight.bold)),
             Gap(15),
             Text(
               'It\'s time to get organized',

@@ -18,11 +18,16 @@ class TextStyles {
     return TextStyle(fontSize: fontSize, color: color, fontWeight: fontWeight);
   }
 
-  static TextStyle getBodyTextStyle({
+  static TextStyle getBodyTextStyle(
+    BuildContext context, {
     double fontSize = 16,
-    Color color = AppColors.blackColor,
+    Color? color,
     FontWeight fontWeight = FontWeight.normal,
   }) {
-    return TextStyle(fontSize: fontSize, color: color, fontWeight: fontWeight);
+    return TextStyle(
+      fontSize: fontSize,
+      color: Theme.of(context).colorScheme.onSurface,
+      fontWeight: fontWeight,
+    );
   }
 }

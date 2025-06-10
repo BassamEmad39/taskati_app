@@ -18,11 +18,18 @@ class TodayHeader extends StatelessWidget {
           children: [
             Text(
               DateFormat.yMMMd().format(DateTime.now()),
-              style: TextStyles.getTitleTextStyle(),
+              style: TextStyles.getBodyTextStyle(
+                context,
+                fontWeight: FontWeight.w500,
+                fontSize: 24,
+              ),
             ),
             Text(
               'Today',
-              style: TextStyles.getBodyTextStyle(fontWeight: FontWeight.bold),
+              style: TextStyles.getBodyTextStyle(
+                context,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

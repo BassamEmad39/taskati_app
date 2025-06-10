@@ -19,6 +19,7 @@ class _UpdateDataState extends State<UpdateData> {
   String path = LocalStorage.getData(LocalStorage.image);
   String name = LocalStorage.getData(LocalStorage.name);
   bool isEditing = false;
+  bool isDarkMode = false;
   var updatedNameController = TextEditingController();
   @override
   void initState() {
@@ -44,6 +45,21 @@ class _UpdateDataState extends State<UpdateData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.dark_mode, color: AppColors.whiteColor),
+            onPressed: () {
+              bool themeMode = LocalStorage.getData(LocalStorage.isDarkMode)?? false;
+              LocalStorage.cacheData(
+                LocalStorage.isDarkMode,
+                !themeMode,
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
