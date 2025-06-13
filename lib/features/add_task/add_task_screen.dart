@@ -39,6 +39,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.locale.languageCode;
     return Scaffold(
       appBar: AppBar(title: Text("task_add".tr())),
       body: Padding(
@@ -69,7 +70,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           title: "create_task".tr(),
           onPressed: () {
             if (formKey.currentState!.validate()) {
-              final selectedDate = DateFormat.yMd().parse(dateController.text);
+              final selectedDate = DateFormat.yMd(
+                currentLocale,
+              ).parse(dateController.text);
               final start = DateTime(
                 selectedDate.year,
                 selectedDate.month,
@@ -86,10 +89,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               );
 
               if (start.isAtSameMomentAs(end)) {
-                showMainDialog(
-                  context,
-                  "error1".tr(),
-                );
+                showMainDialog(context, "error1".tr());
                 return;
               }
 
@@ -112,9 +112,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   isCompleted: false,
                 ),
               );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("task_added".tr())),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("task_added".tr())));
               Navigator.pop(context);
             }
           },
@@ -202,8 +202,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
         Gap(5),
         TextFormField(
-          validator:
-              (value) => value!.isEmpty ? "note_error".tr() : null,
+          validator: (value) => value!.isEmpty ? "note_error".tr() : null,
           controller: descriptionController,
           maxLines: 3,
           decoration: InputDecoration(
@@ -243,14 +242,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   void selectTaskDate() {
+    final currentLocale = context.locale.languageCode;
     showDatePicker(
       context: context,
+
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     ).then((value) {
       if (value != null) {
-        dateController.text = DateFormat.yMd().format(value);
+        dateController.text = DateFormat.yMd(currentLocale).format(value);
       }
     });
   }

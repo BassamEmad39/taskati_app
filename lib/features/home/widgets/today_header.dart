@@ -10,6 +10,7 @@ class TodayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.locale.languageCode;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -17,7 +18,7 @@ class TodayHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat.yMMMd().format(DateTime.now()),
+              DateFormat.yMMMd(currentLocale).format(DateTime.now()),
               style: TextStyles.getBodyTextStyle(
                 context,
                 fontWeight: FontWeight.w500,

@@ -1,4 +1,5 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedDate = '';
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.locale.languageCode;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -30,19 +32,20 @@ class _HomeScreenState extends State<HomeScreen> {
               TodayHeader(),
               Gap(20),
               DatePicker(
+                locale: currentLocale,
                 height: 100,
                 width: 70,
                 DateTime.now(),
                 dayTextStyle: TextStyles.getBodyTextStyle(context),
                 monthTextStyle: TextStyles.getBodyTextStyle(context),
                 dateTextStyle: TextStyles.getBodyTextStyle(context),
-                
+
                 initialSelectedDate: DateTime.now(),
                 selectionColor: AppColors.primaryColor,
                 selectedTextColor: Colors.white,
                 onDateChange: (date) {
                   setState(() {
-                    selectedDate = DateFormat.yMd().format(date);
+                    selectedDate = DateFormat.yMd(currentLocale).format(date);
                   });
                 },
               ),
