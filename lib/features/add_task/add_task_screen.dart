@@ -177,7 +177,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
         Gap(5),
         TextFormField(
-          validator: (value) => value!.isEmpty ? "title_error" : null,
+          validator: (value) => value!.isEmpty ? "title_error".tr() : null,
           controller: titleController,
           decoration: InputDecoration(
             hintText: "title_hint".tr(),
