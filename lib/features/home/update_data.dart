@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,7 @@ class _UpdateDataState extends State<UpdateData> {
   String path = LocalStorage.getData(LocalStorage.image);
   String name = LocalStorage.getData(LocalStorage.name);
   bool isEditing = false;
-  bool isDarkMode = false;
+  bool isDarkMode = LocalStorage.getData(LocalStorage.isDarkMode) ?? false;
   var updatedNameController = TextEditingController();
   @override
   void initState() {
@@ -44,19 +45,43 @@ class _UpdateDataState extends State<UpdateData> {
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.locale;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.dark_mode, color: AppColors.whiteColor),
-            onPressed: () {
-              bool themeMode = LocalStorage.getData(LocalStorage.isDarkMode)?? false;
-              LocalStorage.cacheData(
-                LocalStorage.isDarkMode,
-                !themeMode,
-              );
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                  color: AppColors.whiteColor,
+                ),
+                onPressed: () {
+                  bool themeMode =
+                      LocalStorage.getData(LocalStorage.isDarkMode) ?? false;
+                  LocalStorage.cacheData(LocalStorage.isDarkMode, !themeMode);
+                  isDarkMode = !isDarkMode;
+                  setState(() {});
+                },
+              ),
+              Gap(5),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    if (currentLocale.languageCode == 'en') {
+                      context.setLocale(Locale('ar'));
+                    } else {
+                      context.setLocale(Locale('en'));
+                    }
+                  });
+                },
+                child: Text(
+                  "btn_txt".tr(),
+                  style: TextStyles.getBodyTextStyle(context),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -148,7 +173,14 @@ class _UpdateDataState extends State<UpdateData> {
                   LocalStorage.cacheData(LocalStorage.name, name);
                   Navigator.pop(context, true);
                 },
-                child: Text('Done', style: TextStyles.getTitleTextStyle()),
+                child: Text(
+                  "done".tr(),
+                  style: TextStyles.getBodyTextStyle(
+                    context,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
               ),
             ],
           ),
@@ -172,14 +204,14 @@ class _UpdateDataState extends State<UpdateData> {
             mainAxisSize: MainAxisSize.min,
             children: [
               MainButton(
-                title: 'Upload From Camera',
+                title: "upload_camera".tr(),
                 onPressed: () {
                   uploadImage(true);
                 },
               ),
               const Gap(10),
               MainButton(
-                title: 'Upload From Gallery',
+                title: "upload_gallery".tr(),
                 onPressed: () {
                   uploadImage(false);
                 },

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
@@ -36,12 +37,15 @@ class _HomeHeaderState extends State<HomeHeader> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hello, ${LocalStorage.getData(LocalStorage.name)} ',
+                '${"hello".tr()} ${LocalStorage.getData(LocalStorage.name)} ',
                 style: TextStyles.getTitleTextStyle(
                   color: AppColors.primaryColor,
                 ),
               ),
-              Text('Have a nice day'),
+              Text(
+                "nice_day".tr(),
+                style: TextStyles.getBodyTextStyle(context),
+              ),
             ],
           ),
           CircleAvatar(

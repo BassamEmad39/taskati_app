@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -60,8 +61,8 @@ class TaskListBuilder extends StatelessWidget {
         children: [
           Icon(Icons.check, color: Colors.white),
           Gap(10),
-          const Text(
-            'Complete Task',
+           Text(
+            "complete".tr(),
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
@@ -78,8 +79,8 @@ class TaskListBuilder extends StatelessWidget {
         children: [
           Icon(Icons.delete, color: Colors.white),
           Gap(10),
-          const Text(
-            'Delete Task',
+           Text(
+            "delete".tr(),
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],

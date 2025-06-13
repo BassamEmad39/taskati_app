@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lottie/lottie.dart';
@@ -20,7 +22,7 @@ class _SplashScrennState extends State<SplashScreen> {
   void initState() {
     super.initState();
     String? isFirstTime = LocalStorage.getData(LocalStorage.name);
-    ;
+    
     Future.delayed(Duration(seconds: 3), () {
       context.pushReplacementTo(
         isFirstTime == null ? UploadScreen() : HomeScreen(),

@@ -9,6 +9,7 @@ environment:
 dependencies:
   
   date_picker_timeline: ^1.2.6
+  easy_localization: ^3.0.7+1
   flutter:
     sdk: flutter
   gap: ^3.0.1
@@ -30,6 +31,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/languages/
   fonts:
     - family: poppins
       fonts:

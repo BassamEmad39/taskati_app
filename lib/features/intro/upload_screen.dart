@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +9,7 @@ import 'package:taskati/core/functions/dialog.dart';
 import 'package:taskati/core/functions/navigations.dart';
 import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
+import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/core/widgets/main_button.dart';
 import 'package:taskati/features/home/home_screen.dart';
 
@@ -21,10 +23,27 @@ class UploadScreen extends StatefulWidget {
 class _UploadScreenState extends State<UploadScreen> {
   String? path;
   var nameController = TextEditingController();
+  bool isDarkMode = LocalStorage.getData(LocalStorage.isDarkMode) ?? false;
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.locale;
     return Scaffold(
       appBar: AppBar(
+        leading: TextButton(
+          onPressed: () {
+            setState(() {
+              if (currentLocale.languageCode == 'en') {
+                context.setLocale(Locale('ar'));
+              } else {
+                context.setLocale(Locale('en'));
+              }
+            });
+          },
+          child: Text(
+            "btn_txt".tr(),
+            style: TextStyles.getBodyTextStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
@@ -33,17 +52,17 @@ class _UploadScreenState extends State<UploadScreen> {
                 LocalStorage.cacheData(LocalStorage.image, path!);
                 context.pushReplacementTo(HomeScreen());
               } else if (path == null && nameController.text.isNotEmpty) {
-                showMainDialog(context, 'Please select an image');
+                showMainDialog(context, "select_image".tr());
               } else if (path != null && nameController.text.isEmpty) {
-                showMainDialog(context, 'Please enter your name');
+                showMainDialog(context, "select_name".tr());
               } else {
-                showMainDialog(
-                  context,
-                  'Please upload your image and enter your name',
-                );
+                showMainDialog(context, "select_image_name".tr());
               }
             },
-            child: const Text('Done', style: TextStyle(color: Colors.black)),
+            child: Text(
+              "done".tr(),
+              style: TextStyles.getBodyTextStyle(context),
+            ),
           ),
         ],
       ),
@@ -93,7 +112,27 @@ class _UploadScreenState extends State<UploadScreen> {
               const Gap(20),
               TextFormField(
                 controller: nameController,
-                decoration: const InputDecoration(hintText: 'Enter your name'),
+                decoration: InputDecoration(hintText: "enter_name".tr()),
+              ),
+              Gap(20),
+              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "dark_mode".tr(),
+                    style: TextStyles.getBodyTextStyle(context),
+                  ),
+                  Switch(
+                    value: isDarkMode,
+                    onChanged: (value) {
+                      setState(() {
+                        LocalStorage.cacheData(LocalStorage.isDarkMode, value);
+                        isDarkMode = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -117,14 +156,14 @@ class _UploadScreenState extends State<UploadScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               MainButton(
-                title: 'Upload From Camera',
+                title: "upload_camera".tr(),
                 onPressed: () {
                   uploadImage(true);
                 },
               ),
               const Gap(10),
               MainButton(
-                title: 'Upload From Gallery',
+                title: "upload_gallery".tr(),
                 onPressed: () {
                   uploadImage(false);
                 },

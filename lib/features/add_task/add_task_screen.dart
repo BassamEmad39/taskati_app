@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
+import 'package:taskati/core/functions/dialog.dart';
 import 'package:taskati/core/model/task_model.dart';
 import 'package:taskati/core/services/local_storage.dart';
 import 'package:taskati/core/utils/colors.dart';
@@ -22,6 +25,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   var startTimeController = TextEditingController();
   var endTimeController = TextEditingController();
   var formKey = GlobalKey<FormState>();
+  TimeOfDay selectedStartTime = TimeOfDay.now();
+  TimeOfDay selectedEndTime = TimeOfDay.now();
+  TimeOfDay nowTime = TimeOfDay.now();
 
   @override
   void initState() {
@@ -34,7 +40,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Task')),
+      appBar: AppBar(title: Text("task_add".tr())),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -60,9 +66,38 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: MainButton(
-          title: 'Create Task',
+          title: "create_task".tr(),
           onPressed: () {
             if (formKey.currentState!.validate()) {
+              final selectedDate = DateFormat.yMd().parse(dateController.text);
+              final start = DateTime(
+                selectedDate.year,
+                selectedDate.month,
+                selectedDate.day,
+                selectedStartTime.hour,
+                selectedStartTime.minute,
+              );
+              final end = DateTime(
+                selectedDate.year,
+                selectedDate.month,
+                selectedDate.day,
+                selectedEndTime.hour,
+                selectedEndTime.minute,
+              );
+
+              if (start.isAtSameMomentAs(end)) {
+                showMainDialog(
+                  context,
+                  "error1".tr(),
+                );
+                return;
+              }
+
+              if (start.isAfter(end)) {
+                showMainDialog(context, "error2".tr());
+                return;
+              }
+
               String id = titleController.text + DateTime.now().toString();
               LocalStorage.cacheTask(
                 id,
@@ -78,11 +113,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
               );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Task added successfully!')),
+                SnackBar(content: Text("task_added".tr())),
               );
               Navigator.pop(context);
             }
-            ;
           },
         ),
       ),
@@ -94,7 +128,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Color',
+          "color".tr(),
           style: TextStyles.getBodyTextStyle(
             context,
             fontWeight: FontWeight.w500,
@@ -135,7 +169,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Title',
+          "title".tr(),
           style: TextStyles.getBodyTextStyle(
             context,
             fontWeight: FontWeight.w500,
@@ -143,10 +177,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
         Gap(5),
         TextFormField(
-          validator: (value) => value!.isEmpty ? 'Title cannot be empty' : null,
+          validator: (value) => value!.isEmpty ? "title_error" : null,
           controller: titleController,
           decoration: InputDecoration(
-            hintText: 'Enter title here',
+            hintText: "title_hint".tr(),
             hintStyle: TextStyles.getSmallTextStyle(),
           ),
         ),
@@ -160,7 +194,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
       children: [
         Text(
-          'Note',
+          "note".tr(),
           style: TextStyles.getBodyTextStyle(
             context,
             fontWeight: FontWeight.w500,
@@ -169,11 +203,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         Gap(5),
         TextFormField(
           validator:
-              (value) => value!.isEmpty ? 'Description cannot be empty' : null,
+              (value) => value!.isEmpty ? "note_error".tr() : null,
           controller: descriptionController,
           maxLines: 3,
           decoration: InputDecoration(
-            hintText: 'Enter note here',
+            hintText: "note_hint".tr(),
             hintStyle: TextStyles.getSmallTextStyle(),
           ),
         ),
@@ -186,7 +220,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Date',
+          "date".tr(),
           style: TextStyles.getBodyTextStyle(
             context,
             fontWeight: FontWeight.w500,
@@ -212,7 +246,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     ).then((value) {
       if (value != null) {
@@ -227,7 +261,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Start Time',
+            "start_time".tr(),
             style: TextStyles.getBodyTextStyle(
               context,
               fontWeight: FontWeight.w500,
@@ -237,15 +271,33 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           TextFormField(
             controller: startTimeController,
             readOnly: true,
-            onTap: () {
-              showTimePicker(
+            onTap: () async {
+              final picked = await showTimePicker(
                 context: context,
-                initialTime: TimeOfDay.now(),
-              ).then((value) {
-                if (value != null) {
-                  startTimeController.text = value.format(context);
+                initialTime: selectedStartTime,
+              );
+
+              if (picked != null) {
+                final now = TimeOfDay.now();
+                final selectedDate = DateFormat.yMd().parse(
+                  dateController.text,
+                );
+                final today = DateTime.now();
+
+                // Prevent past time only if selected date is today
+                if (isSameDate(today, selectedDate) &&
+                    (picked.hour < now.hour ||
+                        (picked.hour == now.hour &&
+                            picked.minute < now.minute))) {
+                  showMainDialog(context, "error4".tr());
+                  return;
                 }
-              });
+
+                setState(() {
+                  selectedStartTime = picked;
+                  startTimeController.text = picked.format(context);
+                });
+              }
             },
             decoration: InputDecoration(
               suffixIcon: Icon(Icons.access_time),
@@ -263,7 +315,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'End Time',
+            "end_time".tr(),
             style: TextStyles.getBodyTextStyle(
               context,
               fontWeight: FontWeight.w500,
@@ -271,18 +323,35 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
           Gap(5),
           TextFormField(
-            readOnly: true,
-            onTap: () {
-              showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.now(),
-              ).then((value) {
-                if (value != null) {
-                  endTimeController.text = value.format(context);
-                }
-              });
-            },
             controller: endTimeController,
+            readOnly: true,
+            onTap: () async {
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: selectedEndTime,
+              );
+
+              if (picked != null) {
+                final now = TimeOfDay.now();
+                final selectedDate = DateFormat.yMd().parse(
+                  dateController.text,
+                );
+                final today = DateTime.now();
+
+                if (isSameDate(today, selectedDate) &&
+                    (picked.hour < now.hour ||
+                        (picked.hour == now.hour &&
+                            picked.minute < now.minute))) {
+                  showMainDialog(context, "error3".tr());
+                  return;
+                }
+
+                setState(() {
+                  selectedEndTime = picked;
+                  endTimeController.text = picked.format(context);
+                });
+              }
+            },
             decoration: InputDecoration(
               suffixIcon: Icon(Icons.access_time),
               hintStyle: TextStyles.getSmallTextStyle(color: Colors.black),
@@ -291,5 +360,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ],
       ),
     );
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

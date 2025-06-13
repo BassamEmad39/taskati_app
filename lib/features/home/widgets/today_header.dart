@@ -1,5 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:taskati/core/functions/navigations.dart';
 import 'package:taskati/core/utils/text_styles.dart';
 import 'package:taskati/core/widgets/main_button.dart';
@@ -25,7 +25,7 @@ class TodayHeader extends StatelessWidget {
               ),
             ),
             Text(
-              'Today',
+              "today".tr(),
               style: TextStyles.getBodyTextStyle(
                 context,
                 fontWeight: FontWeight.bold,
@@ -35,7 +35,7 @@ class TodayHeader extends StatelessWidget {
         ),
         MainButton(
           width: 137,
-          title: '+ Add Task',
+          title: "add_task".tr(),
           onPressed: () {
             context.pushTo(AddTaskScreen());
           },
