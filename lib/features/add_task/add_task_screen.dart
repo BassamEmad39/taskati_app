@@ -279,10 +279,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               );
 
               if (picked != null) {
+                final currentLocale = context.locale.languageCode;
+
                 final now = TimeOfDay.now();
-                final selectedDate = DateFormat.yMd().parse(
-                  dateController.text,
-                );
+                final selectedDate = DateFormat.yMd(
+                  currentLocale,
+                ).parse(dateController.text);
                 final today = DateTime.now();
 
                 // Prevent past time only if selected date is today
@@ -333,10 +335,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               );
 
               if (picked != null) {
+                final currentLocale = context.locale.languageCode;
                 final now = TimeOfDay.now();
-                final selectedDate = DateFormat.yMd().parse(
-                  dateController.text,
-                );
+                final selectedDate = DateFormat.yMd(
+                  currentLocale,
+                ).parse(dateController.text);
                 final today = DateTime.now();
 
                 if (isSameDate(today, selectedDate) &&
